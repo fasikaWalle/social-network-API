@@ -42,7 +42,7 @@ const ThoughtsSchema=new Schema({
     reactions :[reactionSchema]
     
 })
-const Thoughts=model('thoughts',ThoughtsSchema)
+const Thoughts=model('Thoughts',ThoughtsSchema)
 ThoughtsSchema.virtual('reactionCount').get(function(){
     return this.reactions.length
 })

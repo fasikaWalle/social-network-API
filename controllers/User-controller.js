@@ -1,5 +1,5 @@
 
-const User=require('../models/User')
+const {User}=require('../models')
 
 const UserController={
     
@@ -10,7 +10,7 @@ const UserController={
     },
     
     getSingleUser({params},res){
-        User.findOne({_id:params.id}).populate({path:'thoughts',path:'friends',select:'-_v'}).then(dbUserData=>{
+        User.findOne({_id:params.id}).populate({path:'thoughts',select:'-_v'}).then(dbUserData=>{
             if(!dbUserData){
                 res.status(404).json('There is no user with this id')
             }
@@ -21,7 +21,17 @@ const UserController={
         User.create(body).then(dbUserData=>{
             res.json(dbUserData)
         }).catch(err=>{res.status(400).json(err)})
+    },
+    
+    updateUser({params},res){
+        User.findOneAndUpdate({_id:params.id},body,{new:true}).then(dbUserData=>{
+            if(!dbUserData){
+                res.status(404).json({message:'There is no user with this id'})
+            }
+            res.json(dbUserData)
+        }).catch(err=>{res.status(400).json(err)})
     }
+    
 }
 
 module.exports=UserController
