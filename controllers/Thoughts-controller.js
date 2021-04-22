@@ -20,10 +20,9 @@ const ThoughtsController={
         res.status(400).json(err)  
     })
 },
-createThought({params,body},res){
-    console.log(params)
+createThought({body},res){
     Thoughts.create(body).then(({_id})=>{
-        return User.findOneAndUpdate({_id:params.userId},{$addToSet:{thoughts:_id}},{new:true,runValidators:true})
+        return User.findOneAndUpdate({_id:body.userId},{$addToSet:{thoughts:_id}},{new:true,runValidators:true})
     }).then(dbUserData=>{
         if(!dbUserData){
             res.status(404).json({message:'There is no user  with this id'})
