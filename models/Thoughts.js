@@ -12,7 +12,7 @@ const reactionSchema=new Schema({
     },
     username:{
         type:String,
-        required:[true,'please insert username'],
+        required:[true,'please insert a username'],
     },
     createdAt:{
         type:Date,
