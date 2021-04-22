@@ -2,7 +2,7 @@ const {Thoughts, User}=require('../models')
 
 const ThoughtsController={
     getAllThoughts(req,res){
-        Thoughts.find({}).select('-__v').then(dbThoughtData=>{
+        Thoughts.find({}).select('-__v').populate({path:'reactions'}).then(dbThoughtData=>{
             res.json(dbThoughtData)
         }).catch(err=>{
             res.status(400).json(err)
@@ -10,7 +10,7 @@ const ThoughtsController={
     },
     
     getSingleThoughtById({params},res){
-      Thoughts.findOne({_id:params.id}).select('-__v').then(dbThoughtData=>{
+      Thoughts.findOne({_id:params.id}).select('-__v').populate({path:'reactions'}).then(dbThoughtData=>{
           if(!dbThoughtData){
               res.status(404).json({message:'no thought found with this id'})
               return;
@@ -23,7 +23,7 @@ const ThoughtsController={
 createThought({params,body},res){
     console.log(params)
     Thoughts.create(body).then(({_id})=>{
-        return User.findOneAndUpdate({_id:params.userId},{$addToSet:{thoughts:_id}},{new:true})
+        return User.findOneAndUpdate({_id:params.userId},{$addToSet:{thoughts:_id}},{new:true,runValidators:true})
     }).then(dbUserData=>{
         if(!dbUserData){
             res.status(404).json({message:'There is no user  with this id'})
@@ -42,7 +42,7 @@ deleteThought({params},res){
     }).catch(err=>{res.status(400).json(err)})
 },
 updateThought({params,body},res){
-   Thoughts.findOneAndUpdate({_id:params.id},body,{new:true}).then(dbThoughtData=>{
+   Thoughts.findOneAndUpdate({_id:params.id},body,{new:true,runValidators:true}).then(dbThoughtData=>{
        if(!dbThoughtData){
         res.status(404).json({message:'There is no thought with this id'})
         return;
@@ -52,7 +52,7 @@ updateThought({params,body},res){
     
 },
 createReactions({params,body},res){
-   Thoughts.findOneAndUpdate({_id:params.thoughtId},{$addToSet:{reactions:body}},{new:true,select:'-__v'}).then(dbThoughtData=>{
+   Thoughts.findOneAndUpdate({_id:params.thoughtId},{$addToSet:{reactions:body}},{new:true,select:'-__v',runValidators:true}).then(dbThoughtData=>{
        if(!dbThoughtData){
            console.log("nice")
         res.status(404).json({message:'There is no thought with this id'}) 
@@ -63,7 +63,7 @@ createReactions({params,body},res){
 },
 deleteReactions({params},res){
     console.log(params)
-    Thoughts.findOneAndUpdate({_id:params.thoughtId},{$pull:{reactions:{reactionId:params.reactionId}}},{new:true}).then(dbThoughtData=>{
+    Thoughts.findOneAndUpdate({_id:params.thoughtId},{$pull:{reactions:{reactionId:params.reactionId}}},{new:true,runValidators:true}).then(dbThoughtData=>{
    res.json(dbThoughtData)
 }).catch(err => res.json(err));
 }

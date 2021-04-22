@@ -24,7 +24,7 @@ const UserSchema=new Schema(
         ]   
     },
     {
-        isJSON:{
+        toJSON:{
             virtuals:true
         },
         id:false
@@ -33,10 +33,8 @@ const UserSchema=new Schema(
 
 const User=model('User',UserSchema)
    
-
  UserSchema.virtual('friendCount').get(function(){
     return this.friends.length
-    // return this.comments.reduce((total,comment)=>total+comment.replies.length+1,0)
  })
  
  module.exports=User   
