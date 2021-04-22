@@ -16,11 +16,10 @@ const reactionSchema=new Schema({
     },
     createdAt:{
         type:Date,
-        default:Date.now() 
+        default:Date.now
         //format date
     }
 })
-
 
 const ThoughtsSchema=new Schema({
     thoughtText:{
@@ -31,17 +30,22 @@ const ThoughtsSchema=new Schema({
     },
     createdAt:{
         type:Date,
-        default:Date.now()
+        default:Date.now
         //getter format date
     },
     username:{
         type:String,
-        required:true
-         
+        required:true    
     },
-    reactions :[reactionSchema]
-    
-})
+    reactions :[reactionSchema]  
+},
+{
+    isJSON:{
+        virtuals:true
+    },
+    id:false
+}
+)
 const Thoughts=model('Thoughts',ThoughtsSchema)
 ThoughtsSchema.virtual('reactionCount').get(function(){
     return this.reactions.length

@@ -4,7 +4,7 @@ const {User}=require('../models')
 const UserController={
     
     getAllUser(req,res){
-        User.find({}).then(dbUserData=>{
+        User.find({}).populate({path:'thoughts',select:'-_v'}).then(dbUserData=>{
             res.json(dbUserData)
         }).catch(err=>{res.status(400).json(err)})
     },
@@ -19,7 +19,14 @@ const UserController={
         }).catch(err=>{res.status(400).json(err)})
     } ,
     createUser({body},res){
-        User.create(body).then(dbUserData=>{
+        User.create(body).then(({_id})=>{
+            return User.findOneAndUpdate({_id:_id},{$addToSet:{friends:_id}},{new:true})
+            
+        }).then(dbUserData=>{
+            if(!dbUserData){
+                res.status(404).json('There is no user with this id')
+                return;
+            }
             res.json(dbUserData)
         }).catch(err=>{res.status(400).json(err)})
     },
