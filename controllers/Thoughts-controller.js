@@ -1,10 +1,12 @@
 const {Thoughts, User}=require('../models')
-
+const dateFormat=require('../utils/dateFormat')
 const ThoughtsController={
     //get all thoughts
     getAllThoughts(req,res){
         Thoughts.find({}).select('-__v').populate({path:'reactions'}).then(dbThoughtData=>{
             res.json(dbThoughtData)
+            
+
         }).catch(err=>{
             res.status(400).json(err)
         })        
